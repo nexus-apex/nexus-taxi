@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Ridevehicles | NexusTaxi{% endblock %}
+{% block page_title %}Ridevehicles{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search ridevehicles...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Vehicle Type</option>
+      <option value="mini" {% if status_filter == 'mini' %}selected{% endif %}>Mini</option>
+      <option value="sedan" {% if status_filter == 'sedan' %}selected{% endif %}>Sedan</option>
+      <option value="suv" {% if status_filter == 'suv' %}selected{% endif %}>SUV</option>
+      <option value="premium" {% if status_filter == 'premium' %}selected{% endif %}>Premium</option>
+      <option value="auto" {% if status_filter == 'auto' %}selected{% endif %}>Auto</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/ridevehicles/create/" class="btn btn-primary">+ New RideVehicle</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Registration</th><th>Make</th><th>Model</th><th>Vehicle Type</th><th>Year</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/ridevehicles/{{ r.pk }}/edit/"><strong>{{ r.registration }}</strong></a></td>
+        <td>{{ r.make|default:"-" }}</td>
+        <td>{{ r.model|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_vehicle_type_display }}</span></td>
+        <td>{{ r.year|default:"-" }}</td>
+        <td class="actions">
+          <a href="/ridevehicles/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/ridevehicles/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No ridevehicles found.</p>
+    <a href="/ridevehicles/create/" class="btn btn-primary" style="margin-top:1rem">Create RideVehicle</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
