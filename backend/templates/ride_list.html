@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Rides | NexusTaxi{% endblock %}
+{% block page_title %}Rides{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search rides...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="requested" {% if status_filter == 'requested' %}selected{% endif %}>Requested</option>
+      <option value="accepted" {% if status_filter == 'accepted' %}selected{% endif %}>Accepted</option>
+      <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>In Progress</option>
+      <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+      <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/rides/create/" class="btn btn-primary">+ New Ride</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Ride Id</th><th>Rider Name</th><th>Rider Phone</th><th>Pickup</th><th>Dropoff</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/rides/{{ r.pk }}/edit/"><strong>{{ r.ride_id }}</strong></a></td>
+        <td>{{ r.rider_name|default:"-" }}</td>
+        <td>{{ r.rider_phone|default:"-" }}</td>
+        <td>{{ r.pickup|default:"-" }}</td>
+        <td>{{ r.dropoff|default:"-" }}</td>
+        <td class="actions">
+          <a href="/rides/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/rides/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No rides found.</p>
+    <a href="/rides/create/" class="btn btn-primary" style="margin-top:1rem">Create Ride</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
