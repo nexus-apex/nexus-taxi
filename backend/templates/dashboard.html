@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | NexusTaxi{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Rides</div>
+    <div class="stat-value">{{ ride_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Ridedrivers</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;background-clip:text">{{ ridedriver_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Ridevehicles</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#f59e0b,#f97316);-webkit-background-clip:text;background-clip:text">{{ ridevehicle_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Distance Km</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#ef4444,#ec4899);-webkit-background-clip:text;background-clip:text">{{ ride_total_distance_km|floatformat:0 }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <h3>Recent Rides</h3>
+    <a href="/rides/create/" class="btn btn-primary btn-sm">+ New Ride</a>
+  </div>
+  {% if recent %}
+  <table>
+    <thead>
+      <tr><th>Ride Id</th><th>Rider Name</th><th>Rider Phone</th><th>Pickup</th><th>Dropoff</th><th>Created</th></tr>
+    </thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td><a href="/rides/{{ r.pk }}/edit/">{{ r.ride_id }}</a></td>
+        <td>{{ r.rider_name|default:"-" }}</td><td>{{ r.rider_phone|default:"-" }}</td><td>{{ r.pickup|default:"-" }}</td><td>{{ r.dropoff|default:"-" }}</td><td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No records yet.</p>
+    <a href="/rides/create/" class="btn btn-primary" style="margin-top:1rem">Create First Ride</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
